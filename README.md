@@ -1,6 +1,6 @@
 # AZATI — Design that converts
 
-Landing page for [AZATI](https://azati.ai/) — a design agency specializing in UI/UX, web & graphic design, motion, branding, and app design.
+Landing page for [AZATI](https://azati.ai/) — a design team specializing in UI/UX, web & graphic design, motion, branding, and app design.
 
 ## Stack
 

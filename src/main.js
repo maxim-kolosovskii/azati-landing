@@ -1,5 +1,5 @@
 // 1. Импортируем стили и библиотеки из node_modules
-import './style-helios.css';
+import './style.css';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
