@@ -563,14 +563,14 @@ footer {
         margin-top: 0;
         padding: 6vh 0;
     }
-    .work-grid {
-        grid-template-columns: 100%;
-        gap: 3vw;
-    }
-    .sidebar {
-        position: relative;
-        top: 0;
-    }
+    /*.work-grid {*/
+    /*    grid-template-columns: 100%;*/
+    /*    gap: 3vw;*/
+    /*}*/
+    /*.sidebar {*/
+    /*    position: relative;*/
+    /*    top: 0;*/
+    /*}*/
     .sidebar ul {
         flex-direction: row;
         flex-wrap: wrap;
@@ -588,6 +588,7 @@ footer {
     }
     .img-wrapper {
         height: auto;
+        max-height: 350px;
     }
     .img-wrapper img {
         position: relative;
@@ -706,6 +707,14 @@ footer {
 }
 
 @media (max-width: 799px) {
+    .work-grid {
+        grid-template-columns: 100%;
+        gap: 3vw;
+    }
+    .sidebar {
+        position: relative;
+        top: 0;
+    }
     .sidebar ul {
         gap: 15px;
         margin-bottom: 3vh;
