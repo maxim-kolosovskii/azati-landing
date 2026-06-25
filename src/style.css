@@ -124,10 +124,8 @@
 
 .img-wrapper { width: 100%; height: 82%; overflow: hidden; position: relative; }
 .img-wrapper img {
-    /*width: 100%; height: 130%;*/
     width: 100%; height: 115%;
     object-fit: cover; object-position: center top;
-    /*position: absolute; top: -15%; left: 0;*/
     position: absolute; top: -8.5%; left: 0;
     will-change: transform;
 }
@@ -474,7 +472,6 @@ footer {
 /* ERRORS */
 .form-error,
 .invalid-feedback {
-    /*display: block;*/
     display: none;
     margin-top: 1vh;
     color: #ff6b6b;
@@ -483,7 +480,6 @@ footer {
     letter-spacing: 0.04em;
 }
 .error__container__general {
-    /*display: block;*/
     display: none;
     margin-top: 1vh;
     padding: 18px 22px;
@@ -543,7 +539,6 @@ footer {
 
 /* ================= RESPONSIVE BREAKPOINTS ================= */
 @media (max-height: 800px) and (min-width: 992px) {
-    /* Защита контента секции Process от обрезки при малой высоте экрана */
     .process-slides { height: 58vh; margin-top: 2vh; }
     .process-slides .process-step h3 {
         margin-bottom: 10px;
@@ -556,7 +551,7 @@ footer {
 }
 
 @media (max-width: 1200px) {
-    .work-grid { grid-template-columns: 200px 1fr; gap: 4vw; }
+    /*.work-grid { grid-template-columns: 200px 1fr; gap: 4vw; }*/
     .service-top .num {
         display: block;
     }
@@ -577,25 +572,29 @@ footer {
         top: 0;
     }
     .sidebar ul {
-        gap: 15px;
-        margin-bottom: 3vh;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 12px;
     }
     .sidebar ul li {
         margin-bottom: 0;
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
     .card {
-        height: 70vh;
-        min-height: 420px;
-        position: relative; top: 0 !important;
+        height: auto;
+        position: relative;
+        top: 0 !important;
         margin-bottom: 40px;
     }
     .img-wrapper {
-        height: 85%;
+        height: auto;
     }
     .img-wrapper img {
-        height: 120%;
-        top: -10%;
+        position: relative;
+        top: auto;
+        height: auto;
+        width: 100%;
+        object-fit: contain;
     }
 
     .services-section {
@@ -703,6 +702,16 @@ footer {
     }
     .submit-btn {
         justify-content: flex-start;
+    }
+}
+
+@media (max-width: 799px) {
+    .sidebar ul {
+        gap: 15px;
+        margin-bottom: 3vh;
+    }
+    .sidebar ul li {
+        font-size: 1rem;
     }
 }
 
