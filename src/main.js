@@ -294,7 +294,10 @@ if (workSection) {
                 }
             });
 
-            // 3. Плавный анимационный переход (GSAP)
+            // 3. Запоминаем позицию скролла до изменений в DOM
+            const scrollBefore = window.scrollY;
+
+            // 4. Плавный анимационный переход (GSAP)
             if (cardsToHide.length > 0) {
                 gsap.to(cardsToHide, {
                     opacity: 0,
@@ -306,6 +309,9 @@ if (workSection) {
                             c.style.display = 'none';
                             c.style.top = '';
                         });
+                        // Восстанавливаем скролл после схлопывания высоты
+                        window.scrollTo(0, scrollBefore);
+                        ScrollTrigger.refresh();
                     }
                 });
             }
@@ -316,6 +322,9 @@ if (workSection) {
                 // Динамически выстраиваем лесенку для карточек
                 card.style.top = `${120 + index * 20}px`;
             });
+
+            // Восстанавливаем скролл после показа карточек (если высота изменилась)
+            window.scrollTo(0, scrollBefore);
 
             gsap.fromTo(cardsToShow,
                 { opacity: 0, scale: 0.98 },
