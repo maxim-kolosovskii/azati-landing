@@ -29,6 +29,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // ================= 2. Умное поведение Sticky-хедера =================
 const headerNode = document.getElementById('site-header');
+const footer = document.getElementById('contact');
 
 lenis.on('scroll', (e) => {
     if (e.scroll > 50) {
@@ -36,13 +37,17 @@ lenis.on('scroll', (e) => {
     } else {
         headerNode.classList.remove('is-scrolled');
     }
-});
 
-ScrollTrigger.create({
-    trigger: "#contact",
-    start: "top 30%",         // хедер прячется только когда футер занял ~30% экрана
-    onEnter: () => headerNode.classList.add('is-hidden'),
-    onLeaveBack: () => headerNode.classList.remove('is-hidden')
+    // Прячем хедер только когда футер реально зашёл во вьюпорт
+    // getBoundingClientRect работает корректно даже при pin от ScrollTrigger
+    const footerTop = footer.getBoundingClientRect().top;
+    const headerBottom = headerNode.offsetHeight;
+
+    if (footerTop <= headerBottom) {
+        headerNode.classList.add('is-hidden');
+    } else {
+        headerNode.classList.remove('is-hidden');
+    }
 });
 
 // ================= 3. GSAP Interface Animations =================
