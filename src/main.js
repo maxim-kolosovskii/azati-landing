@@ -40,7 +40,7 @@ lenis.on('scroll', (e) => {
 
 ScrollTrigger.create({
     trigger: "#contact",
-    start: "top 80px",
+    start: "top 30%",         // хедер прячется только когда футер занял ~30% экрана
     onEnter: () => headerNode.classList.add('is-hidden'),
     onLeaveBack: () => headerNode.classList.remove('is-hidden')
 });
