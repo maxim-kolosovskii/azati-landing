@@ -299,8 +299,8 @@ if (workSection) {
                 }
             });
 
-            // 3. Запоминаем позицию скролла до изменений в DOM
-            const scrollBefore = window.scrollY;
+            // 3. Запоминаем позицию скролла до изменений в DOM (через Lenis!)
+            const scrollBefore = lenis.animatedScroll;
 
             // 4. Плавный анимационный переход (GSAP)
             if (cardsToHide.length > 0) {
@@ -315,7 +315,7 @@ if (workSection) {
                             c.style.top = '';
                         });
                         // Восстанавливаем скролл после схлопывания высоты
-                        window.scrollTo(0, scrollBefore);
+                        lenis.scrollTo(scrollBefore, { immediate: true, force: true });
                         ScrollTrigger.refresh();
                     }
                 });
@@ -329,7 +329,7 @@ if (workSection) {
             });
 
             // Восстанавливаем скролл после показа карточек (если высота изменилась)
-            window.scrollTo(0, scrollBefore);
+            lenis.scrollTo(scrollBefore, { immediate: true, force: true });
 
             gsap.fromTo(cardsToShow,
                 { opacity: 0, scale: 0.98 },
@@ -343,11 +343,88 @@ if (workSection) {
                     onComplete: () => {
                         // Пересчитываем ScrollTrigger, чтобы параллакс картинок не ломался
                         ScrollTrigger.refresh();
+                        updateTagsOverflow();
                     }
                 }
             );
         });
     });
+
+    // ================= 6a. Динамическое сворачивание тегов: макс. 2 строки =================
+    function updateTagsOverflow() {
+        document.querySelectorAll('.tags-wrapper').forEach(wrapper => {
+            if (wrapper.closest('.card')?.style.display === 'none') return;
+
+            const tags = wrapper.querySelectorAll('.tag');
+            let toggle = wrapper.querySelector('.tags-toggle');
+
+            // Сброс: показываем все теги
+            tags.forEach(t => t.classList.remove('overflow'));
+            if (wrapper.classList.contains('expanded')) return;
+
+            if (tags.length < 2) {
+                if (toggle) toggle.classList.remove('visible');
+                return;
+            }
+
+            // Собираем строки по offsetTop
+            const rowTops = [...new Set([...tags].map(t => t.offsetTop))].sort((a, b) => a - b);
+
+            if (rowTops.length <= 2) {
+                if (toggle) toggle.classList.remove('visible');
+                return; // всё влезло в 2 строки
+            }
+
+            // Прячем теги с 3‑й строки и дальше
+            let hidden = 0;
+            tags.forEach(t => {
+                if (t.offsetTop >= rowTops[2]) {
+                    t.classList.add('overflow');
+                    hidden++;
+                }
+            });
+
+            // Создаём / обновляем тоггл
+            if (!toggle) {
+                toggle = document.createElement('span');
+                toggle.className = 'tags-toggle visible';
+                wrapper.appendChild(toggle);
+                toggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    wrapper.classList.add('expanded');
+                });
+            }
+            toggle.textContent = `(+${hidden})`;
+            toggle.classList.add('visible');
+
+            // Тоггл обязан сидеть во 2‑й строке. Если уехал в 3‑ю — освобождаем место,
+            // пряча ещё один тег из 2‑й строки, пока тоггл не встанет на место
+            let guard = 0;
+            while (toggle.offsetTop >= rowTops[2] && guard < hidden) {
+                for (let i = tags.length - 1; i >= 0; i--) {
+                    if (!tags[i].classList.contains('overflow') && tags[i].offsetTop === rowTops[1]) {
+                        tags[i].classList.add('overflow');
+                        hidden++;
+                        toggle.textContent = `+${hidden}`;
+                        break;
+                    }
+                }
+                guard++;
+            }
+        });
+    }
+
+    updateTagsOverflow();
+    window.addEventListener('resize', updateTagsOverflow);
+
+    // Клик вне раскрытого враппера — схлопнуть
+    document.addEventListener('click', (e) => {
+        document.querySelectorAll('.tags-wrapper.expanded').forEach(w => {
+            if (!w.contains(e.target)) w.classList.remove('expanded');
+        });
+    });
+    // После схлопывания — пересчитать переполнение
+    document.addEventListener('click', () => setTimeout(updateTagsOverflow, 50));
 }
 
 // ================= 7. Organic Particle Swarm (Three.js Глобальный блок) =================
