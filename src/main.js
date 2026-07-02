@@ -493,7 +493,7 @@ const geometry = new THREE.BufferGeometry();
 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
 const material = new THREE.PointsMaterial({
-    color: 0xf97316, size: 0.158, transparent: true, opacity: 0.65,
+    color: 0xf97316, size: 0.158, transparent: true, opacity: 0.85,
     blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true
 });
 
