@@ -27,6 +27,34 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// Обновление скролла при валидации формы
+document.querySelector('.contact-form')?.addEventListener('submit', () => {
+    setTimeout(() => { lenis.resize(); ScrollTrigger.refresh(); }, 100);
+});
+document.querySelector('.contact-form')?.addEventListener('invalid', () => {
+    setTimeout(() => { lenis.resize(); ScrollTrigger.refresh(); }, 100);
+}, true);
+
+// Пауза скролла при входе в футер
+let scrollPaused = false;
+const footerStopTrigger = ScrollTrigger.create({
+    trigger: '.footer-cta',
+    start: 'top 22%',
+    onEnter: () => {
+        if (scrollPaused) return;
+        scrollPaused = true;
+        lenis.stop();
+        setTimeout(() => { lenis.start(); scrollPaused = false; }, 1500);
+    },
+    onLeaveBack: () => { scrollPaused = false; lenis.start(); }
+});
+
+// Пересчёт позиций после загрузки всех медиа
+window.addEventListener('load', () => {
+    ScrollTrigger.refresh();
+    footerStopTrigger.refresh();
+});
+
 // ================= 2. Умное поведение Sticky-хедера =================
 const headerNode = document.getElementById('site-header');
 const footer = document.getElementById('contact');
@@ -91,7 +119,7 @@ heroSection.addEventListener('mouseleave', () => {
     if (!isIntroFinished) return;
 
     gsap.to([heroTitle, heroDesc], {
-        x: 0, y: 0, duration: 1.4, ease: "elastic.out(1, 0.5)", overwrite: "auto"
+        x: 0, y: 0, duration: 1.1, ease: "elastic.out(1, 0.5)", overwrite: "auto"
     });
 });
 
@@ -150,7 +178,7 @@ document.querySelectorAll('.js-triangle-reveal-left').forEach(mask => {
 document.querySelectorAll('.js-triangle-reveal-left-45').forEach(mask => {
     gsap.fromTo(mask.querySelector('.corner-triangle-45'),
         { x: "45%", y: "190%" },
-        { x: "0%", y: "0%", delay: 1.2, duration: 1.2, ease: "power4.out", scrollTrigger: { trigger: mask, start: "top 85%" } }
+        { x: "0%", y: "0%", delay: 0.9, duration: 0.35, ease: "power4.out", scrollTrigger: { trigger: mask, start: "top 85%" } }
     );
 });
 
