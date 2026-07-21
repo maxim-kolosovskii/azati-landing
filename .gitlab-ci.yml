@@ -1,0 +1,59 @@
+stages:
+  - build
+  - deploy-prod
+
+build:
+  stage: build
+  tags:
+    - hetzner
+  image: node:lts
+  cache:
+    paths:
+      - node_modules
+  before_script:
+    - node --version
+    - echo "Start time:" `date`
+    - echo "Build name $CI_BUILD_NAME, Project name $CI_PROJECT_NAME, Branch1 $CI_BUILD_REF_NAME, Branch2 $CI_COMMIT_BRANCH, Stage $CI_BUILD_STAGE, Pipeline IID $CI_PIPELINE_IID,_CI_COMMIT_REF_SLUG $CI_COMMIT_REF_SLUG, COMMIT_SHORT_SHA $CI_COMMIT_SHORT_SHA"
+  script:
+    - npm ci
+    - npm run build
+  after_script:
+    - echo "End time:" `date`
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 hour
+
+deploy-prod:
+  stage: deploy-prod
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  tags:
+    - hetzner
+  image: alpine:latest
+  needs: ["build"]
+  before_script:
+    - echo "Start time:" `date`      
+    - 'which ssh-agent || ( apk update -f && apk add --no-cache openssh-client rsync -f )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY_PROD" | ssh-add -
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - |
+      ssh "${DEPLOY_USER_PROD}@${DEPLOY_HOST_PROD}" << 'EOF'
+        set -e
+
+        if [ -d "/home/ux_azati_com/www" ]; then
+          cp /home/ux_azati_com/www/* /home/ux_azati_com/backups/backup_$(date +%F_%H-%M-%S)
+        fi
+
+        echo "Backups current is done."
+      EOF
+    - echo "Need deploy"
+# - rsync -hrv --delete dist/ $DEPLOY_USER_PROD@$DEPLOY_HOST_PROD:/home/ux_azati_com/www/
+  after_script:
+    - echo "End time:" `date`
+  environment:
+    name: production
+    url: https://ux.azati.com
