@@ -55,8 +55,8 @@ deploy-prod:
 
         echo "Backups current is done."
       EOF
-    - echo "Need deploy"
-# - rsync -hrv --delete dist/ $DEPLOY_USER_PROD@$DEPLOY_HOST_PROD:/home/ux_azati_com/www/
+    - ls -la
+    - rsync -hrv --delete dist/ $DEPLOY_USER_PROD@$DEPLOY_HOST_PROD:/home/ux_azati_com/www/
   after_script:
     - echo "End time:" `date`
   environment:
