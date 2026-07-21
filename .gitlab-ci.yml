@@ -37,17 +37,18 @@ deploy-prod:
     - apk add --no-cache openssh-client rsync -f
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_PROD" > ~/.ssh/id_rsa
+    - cp "$CI_BUILD_DIR/SSH_PRIVATE_KEY_PROD" ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H "$DEPLOY_HOST_PROD" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   script:
     - |
       ssh "${DEPLOY_USER_PROD}@${DEPLOY_HOST_PROD}" << 'EOF'
         set -e
-
         if [ -d "/home/ux_azati_com/www" ]; then
-          cp /home/ux_azati_com/www/* /home/ux_azati_com/backups/backup_$(date +%F_%H-%M-%S)
+          mkdir /home/ux_azati_com/backups/backup_$(date +%F_%H-%M-%S)
+          cp -r /home/ux_azati_com/www/* /home/ux_azati_com/backups/backup_$(date +%F_%H-%M-%S)
         fi
 
         echo "Backups current is done."
