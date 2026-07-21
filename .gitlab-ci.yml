@@ -34,11 +34,13 @@ deploy-prod:
   needs: ["build"]
   before_script:
     - echo "Start time:" `date`      
-    - 'which ssh-agent || ( apk update -f && apk add --no-cache openssh-client rsync -f )'
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY_PROD" | ssh-add -
+    - apk add --no-cache openssh-client rsync -f
     - mkdir -p ~/.ssh
-    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_PROD" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H "$DEPLOY_HOST_PROD" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
   script:
     - |
       ssh "${DEPLOY_USER_PROD}@${DEPLOY_HOST_PROD}" << 'EOF'
